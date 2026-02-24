@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MONTRE - User Details</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #000000, #1c1c1c);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 450px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.7);
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            color: gold;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        .gender-group {
+            margin: 10px 0;
+        }
+
+        .gender-group label {
+            font-weight: bold;
+        }
+
+        .gender-options {
+            margin-top: 5px;
+        }
+
+        .gender-options input {
+            margin: 0 5px 0 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: gold;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: orange;
+        }
+
+        .error {
+            color: #ff4d4d;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Complete Your Profile</h2>
+
+    <form onsubmit="return validateDetails()">
+        
+        <input type="text" id="fullname" placeholder="Full Name with Initial">
+
+        <input type="date" id="dob">
+
+        <div class="gender-group">
+            <label>Gender:</label>
+            <div class="gender-options">
+                <input type="radio" name="gender" value="Male"> Male
+                <input type="radio" name="gender" value="Female"> Female
+                <input type="radio" name="gender" value="Other"> Other
+            </div>
+        </div>
+
+        <textarea id="address" placeholder="Enter Address"></textarea>
+
+        <button type="submit">Continue to Shop</button>
+    </form>
+
+    <p class="error" id="errorMsg"></p>
+</div>
+
+<script>
+
+function validateDetails() {
+
+    let name = document.getElementById("fullname").value;
+    let dob = document.getElementById("dob").value;
+    let gender = document.querySelector('input[name="gender"]:checked');
+    let address = document.getElementById("address").value;
+    let error = document.getElementById("errorMsg");
+
+    if (name === "" || dob === "" || gender === null || address === "") {
+        error.innerText = "Please fill all details!";
+        return false;
+    }
+
+    alert("Profile Completed Successfully!");
+    window.location.href = "index.html";
+    return false;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MONTRE - Shop</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#111;
+    color:white;
+}
+
+nav{
+    background:black;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+nav h2{ color:gold; margin:0; }
+
+nav input{
+    padding:5px;
+    border-radius:5px;
+    border:none;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:20px;
+    cursor:pointer;
+}
+
+.categories{
+    text-align:center;
+    margin:20px;
+}
+
+.categories button{
+    padding:8px 15px;
+    margin:5px;
+    background:gold;
+    border:none;
+    cursor:pointer;
+}
+
+.products{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:20px;
+}
+
+.card{
+    background:#222;
+    padding:15px;
+    width:220px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+button{
+    padding:5px 10px;
+    margin:5px;
+    background:gold;
+    border:none;
+    cursor:pointer;
+}
+
+.section{
+    padding:20px;
+    display:none;
+}
+
+.active{
+    display:block;
+}
+
+.payment-box{
+    background:#222;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>MONTRE</h2>
+
+    <input type="text" id="searchBox" placeholder="Search..."
+    onkeyup="searchProducts()">
+
+    <ul>
+        <li onclick="showShop()">Shop</li>
+        <li onclick="showWishlist()">Wishlist (<span id="wishCount">0</span>)</li>
+        <li onclick="showCart()">Cart (<span id="cartCount">0</span>)</li>
+    </ul>
+</nav>
+
+<!-- SHOP -->
+<div id="shopSection" class="active">
+
+<div class="categories">
+    <button onclick="displayProducts()">All</button>
+    <button onclick="displayProducts('Men')">Men</button>
+    <button onclick="displayProducts('Women')">Women</button>
+    <button onclick="displayProducts('Kids')">Kids</button>
+</div>
+
+<div class="products" id="productList"></div>
+
+</div>
+
+<!-- WISHLIST -->
+<div id="wishlistSection" class="section">
+    <h2 style="text-align:center;">Your Wishlist</h2>
+    <div class="products" id="wishlistItems"></div>
+</div>
+
+<!-- CART -->
+<div id="cartSection" class="section">
+    <h2 style="text-align:center;">Your Cart</h2>
+    <div class="products" id="cartItems"></div>
+
+    <div class="payment-box">
+        <h3>Total: ₹ <span id="totalPrice">0</span></h3>
+
+        <h4>Delivery Details:</h4>
+        <p id="userDetails"></p>
+
+        <h4>Payment Method:</h4>
+        <select>
+            <option>UPI</option>
+            <option>Credit Card</option>
+            <option>Debit Card</option>
+            <option>Cash on Delivery</option>
+        </select>
+
+        <br><br>
+        <button onclick="placeOrder()">Place Order</button>
+    </div>
+</div>
+
+<script>
+
+let products=[
+{name:"Men Classic",price:2500,category:"Men",image:"m1.jpg"},
+{name:"Women Gold",price:3500,category:"Women",image:"w1.jpg"},
+{name:"Kids Fun",price:1500,category:"Kids",image:"k1.jpg"},
+{name:"Men Sport",price:4000,category:"Men",image:"m2.jpg"},
+{name:"Women Elegant",price:5000,category:"Women",image:"w2.jpg"},
+{name:"Kids Bunny",price:1500,category:"Kids",image:"k2.jpg"}
+];
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+let wishlist=JSON.parse(localStorage.getItem("wishlist"))||[];
+let user=JSON.parse(localStorage.getItem("userDetails"));
+
+// DISPLAY PRODUCTS
+function displayProducts(category="All"){
+let list=document.getElementById("productList");
+list.innerHTML="";
+
+let filtered=category==="All"?products:
+products.filter(p=>p.category===category);
+
+filtered.forEach(p=>{
+list.innerHTML+=`
+<div class="card">
+<img src="${p.image}">
+<h4>${p.name}</h4>
+<p>₹ ${p.price}</p>
+<button onclick="addCart('${p.name}')">Add to Cart</button>
+<button onclick="addWishlist('${p.name}')">Wishlist</button>
+</div>`;
+});
+}
+
+// SEARCH
+function searchProducts(){
+let value=document.getElementById("searchBox").value.toLowerCase();
+if(value===""){displayProducts();return;}
+
+let filtered=products.filter(p=>
+p.name.toLowerCase().includes(value)||
+p.category.toLowerCase().includes(value)
+);
+
+let list=document.getElementById("productList");
+list.innerHTML="";
+filtered.forEach(p=>{
+list.innerHTML+=`
+<div class="card">
+<img src="${p.image}">
+<h4>${p.name}</h4>
+<p>₹ ${p.price}</p>
+<button onclick="addCart('${p.name}')">Add to Cart</button>
+<button onclick="addWishlist('${p.name}')">Wishlist</button>
+</div>`;
+});
+}
+
+// ADD CART
+function addCart(name){
+let product=products.find(p=>p.name===name);
+if(!cart.find(p=>p.name===name)){
+cart.push(product);
+localStorage.setItem("cart",JSON.stringify(cart));
+updateCount();
+alert("Added to Cart");
+}
+}
+
+
+
+// ADD WISHLIST
+function addWishlist(name){
+let product=products.find(p=>p.name===name);
+if(!wishlist.find(p=>p.name===name)){
+wishlist.push(product);
+localStorage.setItem("wishlist",JSON.stringify(wishlist));
+updateCount();
+alert("Added to Wishlist");
+}
+}
+
+// SHOW WISHLIST
+function showWishlist(){
+hideAll();
+document.getElementById("wishlistSection").classList.add("active");
+
+let list=document.getElementById("wishlistItems");
+list.innerHTML="";
+wishlist.forEach(p=>{
+list.innerHTML+=`
+<div class="card">
+<img src="${p.image}">
+<h4>${p.name}</h4>
+<p>₹ ${p.price}</p>
+<button onclick="addCart('${p.name}')">Move to Cart</button>
+</div>`;
+});
+}
+
+// SHOW CART
+function showCart(){
+hideAll();
+document.getElementById("cartSection").classList.add("active");
+
+let list=document.getElementById("cartItems");
+list.innerHTML="";
+let total=0;
+
+cart.forEach(p=>{
+total+=p.price;
+list.innerHTML+=`
+<div class="card">
+<img src="${p.image}">
+<h4>${p.name}</h4>
+<p>₹ ${p.price}</p>
+</div>`;
+});
+
+document.getElementById("totalPrice").innerText=total;
+
+if(user){
+document.getElementById("userDetails").innerText=
+"Name: "+user.fullname+
+"\nDOB: "+user.dob+
+"\nGender: "+user.gender+
+"\nAddress: "+user.address;
+}
+}
+
+// SHOW SHOP
+function showShop(){
+hideAll();
+document.getElementById("shopSection").classList.add("active");
+}
+
+// HIDE ALL
+function hideAll(){
+document.getElementById("shopSection").classList.remove("active");
+document.getElementById("wishlistSection").classList.remove("active");
+document.getElementById("cartSection").classList.remove("active");
+}
+
+// PLACE ORDER
+function placeOrder(){
+if(cart.length===0){
+alert("Cart is empty");
+return;
+}
+alert("Order Placed Successfully!");
+cart=[];
+localStorage.removeItem("cart");
+updateCount();
+showShop();
+}
+
+// UPDATE COUNT
+function updateCount(){
+document.getElementById("cartCount").innerText=cart.length;
+document.getElementById("wishCount").innerText=wishlist.length;
+}
+
+updateCount();
+displayProducts();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MONTRE - Login & Register</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #000000, #1c1c1c);
+        }
+
+        .container {
+            width: 400px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.7);
+            text-align: center;
+            color: white;
+        }
+
+        /* LOGO SECTION */
+        .logo img {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+
+        .brand-name {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: gold;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            margin-top: 10px;
+            background: gold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: orange;
+        }
+
+        .toggle {
+            margin-top: 15px;
+            cursor: pointer;
+            color: gold;
+            font-size: 14px;
+        }
+
+        .error {
+            color: #ff4d4d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGO + BRAND -->
+    <div class="logo">
+        <img src="watch_logo.jpg" alt="Watch Logo">
+        <div class="brand-name">MONTRE</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+        <h2>Login</h2>
+        <form onsubmit="return login()">
+            <input type="text" id="loginUser" placeholder="Username">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button type="submit">Login</button>
+        </form>
+        <p class="error" id="loginError"></p>
+        <p class="toggle" onclick="showRegister()">Don't have an account? Register</p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none;">
+        <h2>Register</h2>
+        <form onsubmit="return register()">
+            <input type="text" id="regUser" placeholder="Username">
+            <input type="password" id="regPass" placeholder="Password">
+            <input type="password" id="regConfirm" placeholder="Confirm Password">
+            <button type="submit">Register</button>
+        </form>
+        <p class="error" id="registerError"></p>
+        <p class="toggle" onclick="showLogin()">Already have an account? Login</p>
+    </div>
+
+</div>
+
+<script>
+
+    let storedUser = "";
+    let storedPass = "";
+
+    function showRegister() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "block";
+    }
+
+    function showLogin() {
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
+    }
+
+    function register() {
+        let user = document.getElementById("regUser").value;
+        let pass = document.getElementById("regPass").value;
+        let confirm = document.getElementById("regConfirm").value;
+        let error = document.getElementById("registerError");
+
+        if (user === "" || pass === "" || confirm === "") {
+            error.innerText = "Please fill all fields!";
+            return false;
+        }
+
+        if (pass !== confirm) {
+            error.innerText = "Passwords do not match!";
+            return false;
+        }
+
+        storedUser = user;
+        storedPass = pass;
+
+        alert("Registration Successful! Please Login.");
+        showLogin();
+        return false;
+    }
+
+    function login() {
+        let user = document.getElementById("loginUser").value;
+        let pass = document.getElementById("loginPass").value;
+        let error = document.getElementById("loginError");
+
+        if (user === "" || pass === "") {
+            error.innerText = "Please enter all fields!";
+            return false;
+        }
+
+        if (user === storedUser && pass === storedPass) {
+            alert("Login Successful!");
+            window.location.href = "userdetails.html";
+
+            return false;
+        } else {
+            error.innerText = "Invalid Username or Password!";
+            return false;
+        }
+    }
+
+</script>
+
+</body>
+</html>
